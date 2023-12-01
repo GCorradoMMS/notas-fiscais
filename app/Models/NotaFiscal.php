@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-
 class NotaFiscal extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $table = 'notas_fiscais';
-    protected $primaryKey = 'numero';
+    protected $primaryKey = 'id';
+    public $incrementing = true;
     public $timestamps = true;
     
     protected $fillable = [

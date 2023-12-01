@@ -12,7 +12,7 @@ class NotaFiscalRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -26,9 +26,9 @@ class NotaFiscalRequest extends FormRequest
             'numero' => 'required|digits:9||unique:notas_fiscais,numero,' . $this->route('notas_fiscais'),
             'valor' => 'required|numeric|min:1',
             'data_emissao' => 'required|date|before_or_equal:today',
-            'cnpj_remetente' => ['required|cnpj', new CnpjValido],
+            'cnpj_remetente' => ['required', new CnpjValido],
             'nome_remetente' => 'required|max:100',
-            'cnpj_transportador' => ['required|cnpj', new CnpjValido],
+            'cnpj_transportador' => ['required', new CnpjValido],
             'nome_transportador' => 'required|max:100',
         ];
     }

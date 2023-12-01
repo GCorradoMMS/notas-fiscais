@@ -19,36 +19,26 @@ class CnpjValido implements ValidationRule
         }
     }
 
-    private function validarCnpj($cnpj): bool {
-        $digitos = $this->retornarDigitos($cnpj);
+    private function validarCnpj($cnpj) {
 
-        if(!$digitos) {
+      $cnpj = preg_replace('/[^0-9]/', '', $cnpj);
+
+      if (strlen($cnpj) != 14)
+        return false;
+
+      if (preg_match('/(\d)\1{13}/', $cnpj))
+        return false;
+ 
+      $b = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+        for ($i = 0, $n = 0; $i < 12; $n += $cnpj[$i] * $b[++$i]);
+        if ($cnpj[12] != ((($n %= 11) < 2) ? 0 : 11 - $n)) {
             return false;
         }
-
-        $calculo1 = $this->calcularDigitos($cnpj, 5);
-        $calculo2 = $this->calcularDigitos($calculo1, 6);
-    
-        return $calculo1 === $digitos[0] && $calculo2 === $digitos[1];
-    }
-
-    private function retornarDigitos($cnpj): string | bool {
-        $cnpj = preg_replace('/[^0-9]/', '', (string) $cnpj);
-    
-        if (strlen($cnpj) !== 14 || preg_match('/^(\d)\1+$/', $cnpj)) {
+        for ($i = 0, $n = 0; $i <= 12; $n += $cnpj[$i] * $b[$i++]);
+ 
+        if ($cnpj[13] != ((($n %= 11) < 2) ? 0 : 11 - $n)) {
             return false;
         }
-    
-        return substr($cnpj, 12);
-    }
-    
-    private function calcularDigitos($cnpj, $length): int {
-        for ($i = 0, $j = $length, $soma = 0; $i < $length; $i++, $j--) {
-            $soma += $cnpj[$i] * $j;
-        }
-    
-        $resto = $soma % 11;
-    
-        return $resto < 2 ? 0 : 11 - $resto;
+      return true;
     }
 }
